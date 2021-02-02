@@ -4,18 +4,26 @@ import { useMutation } from "@apollo/client";
 import { INICIAR_SESION } from "graphql/querys/usuario";
 import {Boton} from "componentes/reutilizables/Boton";
 import { ModalComponent } from "componentes/reutilizables/ModalComponent";
-import { ModalMensajeError } from "componentes/reutilizables/ModalMensajeError";
+import { ModalMensajeForm } from "componentes/reutilizables/ModalMensajeForm";
 import FormBody from "componentes/reutilizables/FormBody";
 import useForm from "hooks/useForm";
+import useUsuario from "hooks/useUsuario";
 import { LOGIN_FORM, login_validacion } from "utils/formularios/autenticacion";
 import { FormBox, DivLink } from "../styles";
+import errorImage from "assets/img/error.png";
 
 export default function Login({ change }) {
     const [iniciarSesion] = useMutation(INICIAR_SESION);
+    const { decodificarToken } = useUsuario();
 
-    const { loading, modal, mensaje, cambiarModal, cambiarLoading, cambiarMensaje } = useForm({
-        initialLoading: false, initialModal: false, initialMensaje: ""
-    });
+    const { 
+            loading, modal, mensaje,titulo, imagen, cambiarLoading,cambiarModal, cambiarMensaje, cambiarTitulo, cambiarImagen } = useForm({
+                initialLoading: false, 
+                initialModal: false,
+                initialMensaje: "",
+                initialTitle: "",
+                initialImagen: ""
+            });
 
     console.log("login se ejecuta")
 
@@ -40,12 +48,15 @@ export default function Login({ change }) {
                             }
                         });
                         console.log(result.data.iniciarSesion.token);
+                        decodificarToken(result.data.iniciarSesion.token);
                         cambiarLoading(false);
 
                     }
                     catch (error) {
                         console.log(error.message)
                         cambiarMensaje(error.message)
+                        cambiarTitulo("Tenemos errores")
+                        cambiarImagen(errorImage)
                         cambiarLoading(false);
                         cambiarModal(true);
 
@@ -76,9 +87,9 @@ export default function Login({ change }) {
             <ModalComponent
                 estado={modal}
                 cambiarEstado={cambiarModal}
-                size="tiny"
+                size="small"
             >
-                <ModalMensajeError titulo="Tenemos un error" mensaje={mensaje} />
+               <ModalMensajeForm titulo={titulo} mensaje={mensaje} img={imagen} />
             </ModalComponent>
         </>
     )

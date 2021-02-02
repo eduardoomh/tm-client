@@ -6,36 +6,44 @@ import useForm from "hooks/useForm";
 import FormBody from "componentes/reutilizables/FormBody";
 import {Boton} from "componentes/reutilizables/Boton";
 import { ModalComponent } from "componentes/reutilizables/ModalComponent";
-import { ModalMensajeError } from "componentes/reutilizables/ModalMensajeError";
+import { ModalMensajeForm } from "componentes/reutilizables/ModalMensajeForm";
 import { REGISTRO_FORM, validacionSchema } from "utils/formularios/autenticacion";
+import checkImage from "assets/img/check.png";
+import errorImage from "assets/img/error.png";
 
 import { FormBox, DivLink } from "../styles";
 
 export default function Registro({ change }) {
     const [crearUsuario] = useMutation(CREAR_USUARIO);
 
-    const {  modal, mensaje, cambiarModal, cambiarLoading, cambiarMensaje } = useForm({
-        initialLoading: false, initialModal: false, initialMensaje: ""
+    const {  modal, mensaje, titulo, imagen, cambiarModal, cambiarLoading, cambiarMensaje, cambiarTitulo, cambiarImagen } = useForm({
+        initialLoading: false, 
+        initialModal: false,
+        initialMensaje: "",
+        initialTitle: "",
+        initialImagen: ""
     });
 
+    const initialValues = {
+        nombre: "",
+        apellidos: "",
+        correo: "",
+        numero_control: "",
+        contrasena: "",
+        repetir_contrasena: ""
+    }
 
 
     return (
         <>
             <Formik
-                initialValues={{
-                    nombre: "",
-                    apellidos: "",
-                    correo: "",
-                    numero_control: "",
-                    contrasena: "",
-                    repetir_contrasena: ""
-                }}
+                initialValues={initialValues}
                 validationSchema={validacionSchema}
-                onSubmit={async (data) => {
+                onSubmit={async (data, {resetForm}) => {
 
                     try {
                         cambiarLoading(true);
+                        delete data.repetir_contrasena;
                         const result = await crearUsuario({
                             variables: {
                                 input: {
@@ -43,13 +51,26 @@ export default function Registro({ change }) {
                                 }
                             }
                         });
-                        console.log(result.data.iniciarSesion.token);
+                        const {nombre, apellidos} = result.data.crearUsuario;
+                        console.log(result.data.crearUsuario);
+                        cambiarTitulo("Usuario creado con exito")
+                        cambiarMensaje(`Felicidades, el usuario ${nombre} ${apellidos} ha sido creado correctamente, espere a ser aprobado`)
+                        cambiarImagen(checkImage);
+                        cambiarModal(true);
                         cambiarLoading(false);
+                        resetForm()
+
+                        setTimeout(() =>{
+                            change()
+                        }, 3000);
+                        
 
                     }
                     catch (error) {
                         console.log(error.message)
                         cambiarMensaje(error.message)
+                        cambiarTitulo("Tenemos errores")
+                        cambiarImagen(errorImage);
                         cambiarLoading(false);
                         cambiarModal(true);
 
@@ -79,7 +100,7 @@ export default function Registro({ change }) {
                 cambiarEstado={cambiarModal}
                 size="tiny"
             >
-                <ModalMensajeError titulo="Tenemos un error" mensaje={mensaje} />
+               <ModalMensajeForm titulo={titulo} mensaje={mensaje} img={imagen} />
             </ModalComponent>
         </>
     )

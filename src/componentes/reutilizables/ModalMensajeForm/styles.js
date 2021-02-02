@@ -17,13 +17,15 @@ export const Div = styled.div`
         display: flex;
         justify-content:center;
         align-items:center;
+        text-align: center;
+        padding-top: 1rem;
         font-size: 1.4rem;
     }
     div{
         display: flex;
         justify-content: center;
         img{
-            width: 14rem;
+            width: 10rem;
         }
 
     }

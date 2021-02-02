@@ -2,13 +2,13 @@ import React from "react";
 import {Div} from "./styles";
 import {Image} from "semantic-ui-react";
 
-export default function Modal({titulo, mensaje}){
+export default function Modal({titulo, mensaje, img}){
     console.log("modal mensaje se ejecuta");
     return(
         <Div>
             <h2>{titulo}</h2>
             <div>
-              <Image src={"https://www.levelaccess.com/wp-content/uploads/2014/08/form-error.jpg"} />  
+              <Image src={img} />  
             </div>
             
             <p>{mensaje}</p>
@@ -16,4 +16,4 @@ export default function Modal({titulo, mensaje}){
     )
 }
 
-export const ModalMensajeError = React.memo(Modal)
+export const ModalMensajeForm = React.memo(Modal)
