@@ -15,6 +15,7 @@
     "enzyme": "^3.11.0",
     "formik": "^2.2.6",
     "graphql": "^15.5.0",
+    "jsonwebtoken": "^8.5.1",
     "jwt-decode": "^3.1.2",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
